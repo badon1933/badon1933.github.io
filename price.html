@@ -1,0 +1,91 @@
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+
+<!-- Include firebase database -->
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyAXLrK1vh6A5ill1rQNl9GFeagECyk5hTE",
+    authDomain: "balad-farm-chatapp.firebaseapp.com",
+    databaseURL: "https://balad-farm-chatapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "balad-farm-chatapp",
+    storageBucket: "balad-farm-chatapp.appspot.com",
+    messagingSenderId: "372152412143",
+    appId: "1:372152412143:web:3af77dc24dafd4bbe9781a",
+    measurementId: "G-5FM4STP5JT"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  function updatePrice() {
+    // get price
+    var price = document.getElementById("price").value;
+    var low = document.getElementById("low").value;
+    var high = document.getElementById("high").value;
+    var time = document.getElementById("time").value;
+
+    // save in database
+    firebase.database().ref("price-list").push().set({
+      "price": price,
+      "high": high,
+      "low": low,
+      "time": time
+    })
+
+    // prevent from submitting
+    return false;
+  }
+
+  // listen for incoming messages
+  firebase.database().ref("price-list").on("child_added", function (snapshot) {
+    var html = "<tr>";
+    html += "<td>" + snapshot.val().price + "</td>";
+    html += "<td>" + snapshot.val().low + "</td>";
+    html += "<td>" + snapshot.val().high + "</td>";
+    html += "<td>" + snapshot.val().time + "</td>";
+    html += "</tr>";
+
+    document.getElementById("price-list").innerHTML += html;
+  })
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IDX Pricelist</title>
+</head>
+
+<body>
+  <div class="wrapper">
+    <!-- Create a list -->
+    <table border="1" id="price-list">
+      <th>Price</th>
+      <th>Low</th>
+      <th>High</th>
+      <th>Time</th>
+    </table>
+
+    <hr>
+
+    <form onsubmit="return updatePrice();">
+      <label for="price">price</label>
+      <input type="text" id="price" autocomplete="off"><br>
+      <label for="low">low</label>
+      <input type="text" id="low" autocomplete="off"><br>
+      <label for="high">high</label>
+      <input type="text" id="high" autocomplete="off"><br>
+      <label for="time">time</label>
+      <input type="text" id="time" autocomplete="off"><br>
+      <input type="submit" id="submit">
+    </form>
+  </div>
+
+</body>
+
+</html>
